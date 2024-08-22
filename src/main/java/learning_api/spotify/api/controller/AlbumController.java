@@ -1,36 +1,45 @@
-package learning_api.spotify.controller;
+package learning_api.spotify.api.controller;
 
+import learning_api.spotify.api.dto.Album;
+import learning_api.spotify.api.dto.LoginRequest;
+import learning_api.spotify.client.AlbumSpotifyClient;
 import learning_api.spotify.client.AuthSpotifyClient;
-import learning_api.spotify.client.LoginRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("spotify/api")
 public class AlbumController {
 
     private final AuthSpotifyClient authSpotifyClient;
+    private final AlbumSpotifyClient albumSpotifyClient;
     @Value("${client.id}")
     private String clientId;
 
     @Value("${client.secret}")
     private String clientSecret;
 
-    public AlbumController(AuthSpotifyClient authSpotifyClient) {
+    public AlbumController(AuthSpotifyClient authSpotifyClient, AlbumSpotifyClient albumSpotifyClient) {
         this.authSpotifyClient = authSpotifyClient;
+        this.albumSpotifyClient = albumSpotifyClient;
     }
 
     @GetMapping("/albums")
-    public ResponseEntity<String> loginRequest() {
+    public ResponseEntity<List<Album>> loginRequest() {
         var request = new LoginRequest(
                 "client_credentials",
                 clientId,
                 clientSecret
         );
 
-        return ResponseEntity.ok(authSpotifyClient.login(request).getAccessToken());
+        var token = authSpotifyClient.login(request).getAccessToken();
+        var response = albumSpotifyClient.getReleases("Bearer " + token);
+
+        return ResponseEntity.ok(response.getAlbums().getItems());
     }
 }

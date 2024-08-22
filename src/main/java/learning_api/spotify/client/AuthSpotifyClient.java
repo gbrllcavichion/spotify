@@ -1,5 +1,7 @@
 package learning_api.spotify.client;
 
+import learning_api.spotify.api.dto.LoginRequest;
+import learning_api.spotify.api.dto.LoginResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;

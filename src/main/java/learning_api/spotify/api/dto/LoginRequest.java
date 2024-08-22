@@ -1,4 +1,4 @@
-package learning_api.spotify.client;
+package learning_api.spotify.api.dto;
 
 import feign.form.FormProperty;
 
